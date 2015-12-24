@@ -41,40 +41,35 @@
 #include "fileutil.h"
 #include "trace.h"
 
-
 /**
  * \brief Open a file, with special handling for `-' or unspecified
  * parameters on input and output.
  *
  * \param fopen-style mode string.
  */
-FILE *
-rs_file_open(char const *filename, char const *mode)
-{
-    FILE           *f;
-    int		    is_write;
+FILE *rs_file_open(char const *filename, char const *mode) {
+    FILE *f;
+    int is_write;
 
     is_write = mode[0] == 'w';
 
-    if (!filename  ||  !strcmp("-", filename)) {
-	if (is_write)
-	    return stdout;
-	else
-	    return stdin;
+    if (!filename || !strcmp("-", filename)) {
+        if (is_write)
+            return stdout;
+        else
+            return stdin;
     }
 
     if (!(f = fopen(filename, mode))) {
-	rs_error("Error opening \"%s\" for %s: %s", filename,
-		  is_write ? "write" : "read",
-		  strerror(errno));
-	exit(RS_IO_ERROR);
+        rs_error("Error opening \"%s\" for %s: %s", filename, is_write ? "write" : "read", strerror(errno));
+        exit(RS_IO_ERROR);
     }
-    
+
     return f;
 }
 
-int rs_file_close(FILE * f)
-{
-    if ((f == stdin) || (f == stdout)) return 0;
+int rs_file_close(FILE *f) {
+    if ((f == stdin) || (f == stdout))
+        return 0;
     return fclose(f);
 }

@@ -30,12 +30,12 @@
 
 /** \private */
 typedef struct _Rollsum {
-    unsigned long count;               /* count of bytes included in sum */
-    unsigned long s1;                  /* s1 part of sum */
-    unsigned long s2;                  /* s2 part of sum */
+    unsigned long count; /* count of bytes included in sum */
+    unsigned long s1;    /* s1 part of sum */
+    unsigned long s2;    /* s2 part of sum */
 } Rollsum;
 
-void RollsumUpdate(Rollsum *sum,const unsigned char *buf,unsigned int len);
+void RollsumUpdate(Rollsum *sum, const unsigned char *buf, unsigned int len);
 /* The following are implemented as macros.
 void RollsumInit(Rollsum *sum);
 void RollsumRotate(Rollsum *sum,unsigned char out, unsigned char in);
@@ -45,26 +45,28 @@ unsigned long RollsumDigest(Rollsum *sum);
 */
 
 /* macro implementations of simple routines */
-#define RollsumInit(sum) { \
-    (sum)->count=(sum)->s1=(sum)->s2=0; \
-}
+#define RollsumInit(sum)                                                                                               \
+    { (sum)->count = (sum)->s1 = (sum)->s2 = 0; }
 
-#define RollsumRotate(sum,out,in) { \
-    (sum)->s1 += (unsigned char)(in) - (unsigned char)(out); \
-    (sum)->s2 += (sum)->s1 - (sum)->count*((unsigned char)(out)+ROLLSUM_CHAR_OFFSET); \
-}
+#define RollsumRotate(sum, out, in)                                                                                    \
+    {                                                                                                                  \
+        (sum)->s1 += (unsigned char)(in) - (unsigned char)(out);                                                       \
+        (sum)->s2 += (sum)->s1 - (sum)->count * ((unsigned char)(out) + ROLLSUM_CHAR_OFFSET);                          \
+    }
 
-#define RollsumRollin(sum,c) { \
-    (sum)->s1 += ((unsigned char)(c)+ROLLSUM_CHAR_OFFSET); \
-    (sum)->s2 += (sum)->s1; \
-    (sum)->count++; \
-}
+#define RollsumRollin(sum, c)                                                                                          \
+    {                                                                                                                  \
+        (sum)->s1 += ((unsigned char)(c) + ROLLSUM_CHAR_OFFSET);                                                       \
+        (sum)->s2 += (sum)->s1;                                                                                        \
+        (sum)->count++;                                                                                                \
+    }
 
-#define RollsumRollout(sum,c) { \
-    (sum)->s1 -= ((unsigned char)(c)+ROLLSUM_CHAR_OFFSET); \
-    (sum)->s2 -= (sum)->count*((unsigned char)(c)+ROLLSUM_CHAR_OFFSET); \
-    (sum)->count--; \
-}
+#define RollsumRollout(sum, c)                                                                                         \
+    {                                                                                                                  \
+        (sum)->s1 -= ((unsigned char)(c) + ROLLSUM_CHAR_OFFSET);                                                       \
+        (sum)->s2 -= (sum)->count * ((unsigned char)(c) + ROLLSUM_CHAR_OFFSET);                                        \
+        (sum)->count--;                                                                                                \
+    }
 
 #define RollsumDigest(sum) (((sum)->s2 << 16) | ((sum)->s1 & 0xffff))
 

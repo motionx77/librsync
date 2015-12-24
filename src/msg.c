@@ -19,20 +19,19 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-
-                              /*
-                               | Welcome to Arco AM/PM Mini-Market. We
-                               | would like to advise our customers
-                               | that any individual who offers to
-                               | pump gas, wash windows or solicit
-                               | products is not employed by or
-                               | associated with this facility.  We
-                               | discourage any contact with these
-                               | individuals and ask that you report
-                               | any problems to uniformed personal
-                               | inside. Thankyou for shopping at
-                               | Arco, and have a nice day.
-                               */
+/*
+ | Welcome to Arco AM/PM Mini-Market. We
+ | would like to advise our customers
+ | that any individual who offers to
+ | pump gas, wash windows or solicit
+ | products is not employed by or
+ | associated with this facility.  We
+ | discourage any contact with these
+ | individuals and ask that you report
+ | any problems to uniformed personal
+ | inside. Thankyou for shopping at
+ | Arco, and have a nice day.
+ */
 
 #include "config.h"
 
@@ -47,9 +46,7 @@
  * relevant to the current encoding function.
  */
 
-
-char const *rs_strerror(rs_result r)
-{
+char const *rs_strerror(rs_result r) {
     switch (r) {
     case RS_DONE:
         return "OK";

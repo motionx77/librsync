@@ -19,12 +19,11 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-
-                              /*
-                               | The hard, lifeless I covered up the
-                               | warm, pulsing It; protecting and
-                               | sheltering.
-                               */
+/*
+ | The hard, lifeless I covered up the
+ | warm, pulsing It; protecting and
+ | sheltering.
+ */
 
 /**
  * \file job.c
@@ -41,7 +40,6 @@
  * \see ::rs_job
  */
 
-
 #include "config.h"
 
 #include <stdlib.h>
@@ -55,14 +53,11 @@
 #include "job.h"
 #include "trace.h"
 
-
 static const int rs_job_tag = 20010225;
 
 static rs_result rs_job_work(rs_job_t *job, rs_buffers_t *buffers);
 
-
-rs_job_t * rs_job_new(char const *job_name, rs_result (*statefn)(rs_job_t *))
-{
+rs_job_t *rs_job_new(char const *job_name, rs_result (*statefn)(rs_job_t *)) {
     rs_job_t *job;
 
     job = rs_alloc_struct(rs_job_t);
@@ -78,17 +73,11 @@ rs_job_t * rs_job_new(char const *job_name, rs_result (*statefn)(rs_job_t *))
     return job;
 }
 
+void rs_job_check(rs_job_t *job) { assert(job->dogtag == rs_job_tag); }
 
-void rs_job_check(rs_job_t *job)
-{
-    assert(job->dogtag == rs_job_tag);
-}
-
-
-rs_result rs_job_free(rs_job_t *job)
-{
+rs_result rs_job_free(rs_job_t *job) {
     if (job->scoop_buf)
-            free(job->scoop_buf);
+        free(job->scoop_buf);
 
     rs_bzero(job, sizeof *job);
     free(job);
@@ -96,19 +85,14 @@ rs_result rs_job_free(rs_job_t *job)
     return RS_DONE;
 }
 
-
-
-static rs_result rs_job_s_complete(rs_job_t *job)
-{
+static rs_result rs_job_s_complete(rs_job_t *job) {
     rs_fatal("should not be reached");
     return RS_INTERNAL_ERROR;
 }
 
-
-static rs_result rs_job_complete(rs_job_t *job, rs_result result)
-{
+static rs_result rs_job_complete(rs_job_t *job, rs_result result) {
     rs_job_check(job);
-    
+
     job->statefn = rs_job_s_complete;
     job->final_result = result;
 
@@ -126,22 +110,20 @@ static rs_result rs_job_complete(rs_job_t *job, rs_result result)
         return result;
 }
 
+rs_result rs_job_iter(rs_job_t *job, rs_buffers_t *buffers) {
+    rs_result result;
+    rs_long_t orig_in, orig_out;
 
-rs_result rs_job_iter(rs_job_t *job, rs_buffers_t *buffers)
-{
-    rs_result       result;
-    rs_long_t       orig_in, orig_out;
-
-    orig_in  = buffers->avail_in;
+    orig_in = buffers->avail_in;
     orig_out = buffers->avail_out;
 
     result = rs_job_work(job, buffers);
 
-    if (result == RS_BLOCKED  ||  result == RS_DONE)
-        if ((orig_in == buffers->avail_in)  &&  (orig_out == buffers->avail_out)
-            && orig_in && orig_out) {
+    if (result == RS_BLOCKED || result == RS_DONE)
+        if ((orig_in == buffers->avail_in) && (orig_out == buffers->avail_out) && orig_in && orig_out) {
             rs_log(RS_LOG_ERR, "internal error: job made no progress "
-                   "[orig_in=" PRINTF_FORMAT_U64 ", orig_out=" PRINTF_FORMAT_U64 ", final_in=" PRINTF_FORMAT_U64 ", final_out=" PRINTF_FORMAT_U64 "]",
+                               "[orig_in=" PRINTF_FORMAT_U64 ", orig_out=" PRINTF_FORMAT_U64
+                               ", final_in=" PRINTF_FORMAT_U64 ", final_out=" PRINTF_FORMAT_U64 "]",
                    PRINTF_CAST_U64(orig_in), PRINTF_CAST_U64(orig_out), PRINTF_CAST_U64(buffers->avail_in),
                    PRINTF_CAST_U64(buffers->avail_out));
             return RS_INTERNAL_ERROR;
@@ -150,10 +132,7 @@ rs_result rs_job_iter(rs_job_t *job, rs_buffers_t *buffers)
     return result;
 }
 
-
-static rs_result
-rs_job_work(rs_job_t *job, rs_buffers_t *buffers)
-{
+static rs_result rs_job_work(rs_job_t *job, rs_buffers_t *buffers) {
     rs_result result;
 
     rs_job_check(job);
@@ -163,7 +142,7 @@ rs_job_work(rs_job_t *job, rs_buffers_t *buffers)
         return RS_PARAM_ERROR;
     }
     job->stream = buffers;
-    
+
     while (1) {
         result = rs_tube_catchup(job);
         if (result == RS_BLOCKED)
@@ -192,28 +171,13 @@ rs_job_work(rs_job_t *job, rs_buffers_t *buffers)
      * bug. */
 }
 
+const rs_stats_t *rs_job_statistics(rs_job_t *job) { return &job->stats; }
 
-const rs_stats_t *
-rs_job_statistics(rs_job_t *job)
-{
-    return &job->stats;
-}
+int rs_job_input_is_ending(rs_job_t *job) { return job->stream->eof_in; }
 
-
-int
-rs_job_input_is_ending(rs_job_t *job)
-{
-    return job->stream->eof_in;
-}
-
-
-
-rs_result
-rs_job_drive(rs_job_t *job, rs_buffers_t *buf,
-             rs_driven_cb in_cb, void *in_opaque,
-             rs_driven_cb out_cb, void *out_opaque)
-{
-    rs_result       result, iores;
+rs_result rs_job_drive(rs_job_t *job, rs_buffers_t *buf, rs_driven_cb in_cb, void *in_opaque, rs_driven_cb out_cb,
+                       void *out_opaque) {
+    rs_result result, iores;
 
     rs_bzero(buf, sizeof *buf);
 
@@ -225,7 +189,7 @@ rs_job_drive(rs_job_t *job, rs_buffers_t *buf,
         }
 
         result = rs_job_iter(job, buf);
-        if (result != RS_DONE  &&  result != RS_BLOCKED)
+        if (result != RS_DONE && result != RS_BLOCKED)
             return result;
 
         if (out_cb) {

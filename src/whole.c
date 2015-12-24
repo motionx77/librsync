@@ -19,15 +19,13 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-                              /*
-                               | Is it possible that software is not
-                               | like anything else, that it is meant
-                               | to be discarded: that the whole point
-                               | is to always see it as a soap bubble?
-                               |        -- Alan Perlis
-                               */
-
-
+/*
+ | Is it possible that software is not
+ | like anything else, that it is meant
+ | to be discarded: that the whole point
+ | is to always see it as a soap bubble?
+ |        -- Alan Perlis
+ */
 
 #include "config.h"
 
@@ -63,12 +61,10 @@
  *
  * \return RS_DONE if the job completed, or otherwise an error result.
  */
-rs_result
-rs_whole_run(rs_job_t *job, FILE *in_file, FILE *out_file)
-{
-    rs_buffers_t    buf;
-    rs_result       result;
-    rs_filebuf_t    *in_fb = NULL, *out_fb = NULL;
+rs_result rs_whole_run(rs_job_t *job, FILE *in_file, FILE *out_file) {
+    rs_buffers_t buf;
+    rs_result result;
+    rs_filebuf_t *in_fb = NULL, *out_fb = NULL;
 
     if (in_file)
         in_fb = rs_filebuf_new(in_file, rs_inbuflen);
@@ -76,9 +72,8 @@ rs_whole_run(rs_job_t *job, FILE *in_file, FILE *out_file)
     if (out_file)
         out_fb = rs_filebuf_new(out_file, rs_outbuflen);
 
-    result = rs_job_drive(job, &buf,
-                          in_fb ? rs_infilebuf_fill : NULL, in_fb,
-                          out_fb ? rs_outfilebuf_drain : NULL, out_fb);
+    result =
+        rs_job_drive(job, &buf, in_fb ? rs_infilebuf_fill : NULL, in_fb, out_fb ? rs_outfilebuf_drain : NULL, out_fb);
 
     if (in_fb)
         rs_filebuf_free(in_fb);
@@ -89,16 +84,10 @@ rs_whole_run(rs_job_t *job, FILE *in_file, FILE *out_file)
     return result;
 }
 
-
-
-rs_result
-rs_sig_file(FILE *old_file, FILE *sig_file, size_t new_block_len,
-            size_t strong_len,
-	    rs_magic_number sig_magic,
-	    rs_stats_t *stats)
-{
-    rs_job_t        *job;
-    rs_result       r;
+rs_result rs_sig_file(FILE *old_file, FILE *sig_file, size_t new_block_len, size_t strong_len,
+                      rs_magic_number sig_magic, rs_stats_t *stats) {
+    rs_job_t *job;
+    rs_result r;
 
     job = rs_sig_begin(new_block_len, strong_len, sig_magic);
     r = rs_whole_run(job, old_file, sig_file);
@@ -109,12 +98,9 @@ rs_sig_file(FILE *old_file, FILE *sig_file, size_t new_block_len,
     return r;
 }
 
-
-rs_result
-rs_loadsig_file(FILE *sig_file, rs_signature_t **sumset, rs_stats_t *stats)
-{
-    rs_job_t            *job;
-    rs_result           r;
+rs_result rs_loadsig_file(FILE *sig_file, rs_signature_t **sumset, rs_stats_t *stats) {
+    rs_job_t *job;
+    rs_result r;
 
     job = rs_loadsig_begin(sumset);
     r = rs_whole_run(job, sig_file, NULL);
@@ -125,14 +111,9 @@ rs_loadsig_file(FILE *sig_file, rs_signature_t **sumset, rs_stats_t *stats)
     return r;
 }
 
-
-
-rs_result
-rs_delta_file(rs_signature_t *sig, FILE *new_file, FILE *delta_file,
-              rs_stats_t *stats)
-{
-    rs_job_t            *job;
-    rs_result           r;
+rs_result rs_delta_file(rs_signature_t *sig, FILE *new_file, FILE *delta_file, rs_stats_t *stats) {
+    rs_job_t *job;
+    rs_result r;
 
     job = rs_delta_begin(sig);
 
@@ -146,18 +127,14 @@ rs_delta_file(rs_signature_t *sig, FILE *new_file, FILE *delta_file,
     return r;
 }
 
-
-
-rs_result rs_patch_file(FILE *basis_file, FILE *delta_file, FILE *new_file,
-                        rs_stats_t *stats)
-{
-    rs_job_t            *job;
-    rs_result           r;
+rs_result rs_patch_file(FILE *basis_file, FILE *delta_file, FILE *new_file, rs_stats_t *stats) {
+    rs_job_t *job;
+    rs_result r;
 
     job = rs_patch_begin(rs_file_copy_cb, basis_file);
 
     r = rs_whole_run(job, delta_file, new_file);
-    
+
     if (stats)
         memcpy(stats, &job->stats, sizeof *stats);
 

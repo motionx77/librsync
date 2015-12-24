@@ -1,31 +1,31 @@
 /*= -*- c-basic-offset: 4; indent-tabs-mode: nil; -*-
  *
  * librsync -- library for network deltas
- * 
+ *
  * Copyright (C) 1999, 2000, 2001 by Martin Pool <mbp@sourcefrog.net>
  * Copyright (C) 1999 by Andrew Tridgell <tridge@samba.org>
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
  * as published by the Free Software Foundation; either version 2.1 of
  * the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-                            /*
-                             | Ummm, well, OK.  The network's the
-                             | network, the computer's the
-                             | computer.  Sorry for the confusion.
-                             |        -- Sun Microsystems
-                             */
+/*
+ | Ummm, well, OK.  The network's the
+ | network, the computer's the
+ | computer.  Sorry for the confusion.
+ |        -- Sun Microsystems
+ */
 
 /*
  * Network-byte-order output to the tube.
@@ -63,17 +63,13 @@
 
 #define RS_MAX_INT_BYTES 8
 
-
 /**
  * \brief Write a single byte to a stream output.
  */
-rs_result
-rs_squirt_byte(rs_job_t *job, unsigned char d)
-{
+rs_result rs_squirt_byte(rs_job_t *job, unsigned char d) {
     rs_tube_write(job, &d, 1);
     return RS_DONE;
 }
-
 
 /**
  * \brief Write a variable-length integer to a stream.
@@ -84,11 +80,9 @@ rs_squirt_byte(rs_job_t *job, unsigned char d)
  *
  * \param len Length of integer, in bytes.
  */
-rs_result
-rs_squirt_netint(rs_job_t *job, rs_long_t d, int len)
-{
-    unsigned char       buf[RS_MAX_INT_BYTES];
-    int                 i;
+rs_result rs_squirt_netint(rs_job_t *job, rs_long_t d, int len) {
+    unsigned char buf[RS_MAX_INT_BYTES];
+    int i;
 
     if (len <= 0 || len > RS_MAX_INT_BYTES) {
         rs_error("Illegal integer length %d", len);
@@ -97,8 +91,8 @@ rs_squirt_netint(rs_job_t *job, rs_long_t d, int len)
 
     /* Fill the output buffer with a bigendian representation of the
      * number. */
-    for (i = len-1; i >=0; i--) {
-        buf[i] = d;             /* truncated */
+    for (i = len - 1; i >= 0; i--) {
+        buf[i] = d; /* truncated */
         d >>= 8;
     }
 
@@ -107,68 +101,50 @@ rs_squirt_netint(rs_job_t *job, rs_long_t d, int len)
     return RS_DONE;
 }
 
+rs_result rs_squirt_n4(rs_job_t *job, int val) { return rs_squirt_netint(job, val, 4); }
 
-
-rs_result
-rs_squirt_n4(rs_job_t *job, int val)
-{
-    return rs_squirt_netint(job, val, 4);
-}
-
-
-
-rs_result
-rs_suck_netint(rs_job_t *job, rs_long_t *v, int len)
-{
-    unsigned char       *buf;
-    int                 i;
-    rs_result           result;
+rs_result rs_suck_netint(rs_job_t *job, rs_long_t *v, int len) {
+    unsigned char *buf;
+    int i;
+    rs_result result;
 
     if (len <= 0 || len > RS_MAX_INT_BYTES) {
         rs_error("Illegal integer length %d", len);
         return RS_INTERNAL_ERROR;
     }
 
-    if ((result = rs_scoop_read(job, len, (void **) &buf)) != RS_DONE)
+    if ((result = rs_scoop_read(job, len, (void **)&buf)) != RS_DONE)
         return result;
 
     *v = 0;
 
     for (i = 0; i < len; i++) {
-        *v = *v<<8 | buf[i];
+        *v = *v << 8 | buf[i];
     }
 
     return RS_DONE;
 }
 
-
-rs_result
-rs_suck_byte(rs_job_t *job, unsigned char *v)
-{
+rs_result rs_suck_byte(rs_job_t *job, unsigned char *v) {
     void *inb;
     rs_result result;
-    
+
     if ((result = rs_scoop_read(job, 1, &inb)) == RS_DONE)
-        *v = *((unsigned char *) inb);
+        *v = *((unsigned char *)inb);
 
     return result;
 }
 
-
-rs_result
-rs_suck_n4(rs_job_t *job, int *v)
-{
-    rs_result       result;
-    rs_long_t       d;
+rs_result rs_suck_n4(rs_job_t *job, int *v) {
+    rs_result result;
+    rs_long_t d;
 
     result = rs_suck_netint(job, &d, 4);
     *v = d;
     return result;
-}        
+}
 
-
-int rs_int_len(rs_long_t val)
-{
+int rs_int_len(rs_long_t val) {
     if (!(val & ~(rs_long_t)0xff))
         return 1;
     else if (!(val & ~(rs_long_t)0xffff))

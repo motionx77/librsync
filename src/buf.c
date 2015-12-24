@@ -19,10 +19,9 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-                              /*
-                               | Pick a window, Jimmy, you're leaving.
-                               */
-
+/*
+ | Pick a window, Jimmy, you're leaving.
+ */
 
 /*
  * buf.c -- Buffers that map between stdio file streams and librsync
@@ -36,7 +35,6 @@
  *
  * TODO: Perhaps expose a routine for shuffling the buffers.
  */
-
 
 #include "config.h"
 #include <sys/types.h>
@@ -62,16 +60,13 @@
  */
 int rs_inbuflen = 16000, rs_outbuflen = 16000;
 
-
 struct rs_filebuf {
-        FILE *f;
-        char            *buf;
-        size_t          buf_len;
+    FILE *f;
+    char *buf;
+    size_t buf_len;
 };
 
-
-rs_filebuf_t *rs_filebuf_new(FILE *f, size_t buf_len)
-{
+rs_filebuf_t *rs_filebuf_new(FILE *f, size_t buf_len) {
     rs_filebuf_t *pf = rs_alloc_struct(rs_filebuf_t);
 
     pf->buf = rs_alloc(buf_len, "file buffer");
@@ -81,27 +76,22 @@ rs_filebuf_t *rs_filebuf_new(FILE *f, size_t buf_len)
     return pf;
 }
 
-
-void rs_filebuf_free(rs_filebuf_t *fb)
-{
-	free(fb->buf);
-        rs_bzero(fb, sizeof *fb);
-        free(fb);
+void rs_filebuf_free(rs_filebuf_t *fb) {
+    free(fb->buf);
+    rs_bzero(fb, sizeof *fb);
+    free(fb);
 }
-
 
 /*
  * If the stream has no more data available, read some from F into
  * BUF, and let the stream use that.  On return, SEEN_EOF is true if
  * the end of file has passed into the stream.
  */
-rs_result rs_infilebuf_fill(rs_job_t *job, rs_buffers_t *buf,
-                            void *opaque)
-{
-    int                     len;
-    rs_filebuf_t            *fb = (rs_filebuf_t *) opaque;
-    FILE                    *f = fb->f;
-        
+rs_result rs_infilebuf_fill(rs_job_t *job, rs_buffers_t *buf, void *opaque) {
+    int len;
+    rs_filebuf_t *fb = (rs_filebuf_t *)opaque;
+    FILE *f = fb->f;
+
     /* This is only allowed if either the buf has no input buffer
      * yet, or that buffer could possibly be BUF. */
     if (buf->next_in != NULL) {
@@ -122,7 +112,7 @@ rs_result rs_infilebuf_fill(rs_job_t *job, rs_buffers_t *buf,
         /* Still some data remaining.  Perhaps we should read
            anyhow? */
         return RS_DONE;
-        
+
     len = fread(fb->buf, 1, fb->buf_len, f);
     if (len <= 0) {
         /* This will happen if file size is a multiple of input block len
@@ -133,12 +123,10 @@ rs_result rs_infilebuf_fill(rs_job_t *job, rs_buffers_t *buf,
             return RS_DONE;
         }
         if (ferror(f)) {
-            rs_error("error filling buf from file: %s",
-                     strerror(errno));
+            rs_error("error filling buf from file: %s", strerror(errno));
             return RS_IO_ERROR;
         } else {
-            rs_error("no error bit, but got %d return when trying to read",
-                     len);
+            rs_error("no error bit, but got %d return when trying to read", len);
             return RS_IO_ERROR;
         }
     }
@@ -148,29 +136,27 @@ rs_result rs_infilebuf_fill(rs_job_t *job, rs_buffers_t *buf,
     return RS_DONE;
 }
 
-
 /*
  * The buf is already using BUF for an output buffer, and probably
  * contains some buffered output now.  Write this out to F, and reset
  * the buffer cursor.
  */
-rs_result rs_outfilebuf_drain(rs_job_t *job, rs_buffers_t *buf, void *opaque)
-{
+rs_result rs_outfilebuf_drain(rs_job_t *job, rs_buffers_t *buf, void *opaque) {
     int present;
-    rs_filebuf_t *fb = (rs_filebuf_t *) opaque;
+    rs_filebuf_t *fb = (rs_filebuf_t *)opaque;
     FILE *f = fb->f;
 
     /* This is only allowed if either the buf has no output buffer
      * yet, or that buffer could possibly be BUF. */
     if (buf->next_out == NULL) {
         assert(buf->avail_out == 0);
-                
+
         buf->next_out = fb->buf;
         buf->avail_out = fb->buf_len;
-                
+
         return RS_DONE;
     }
-        
+
     assert(buf->avail_out <= fb->buf_len);
     assert(buf->next_out >= fb->buf);
     assert(buf->next_out <= fb->buf + fb->buf_len);
@@ -178,28 +164,25 @@ rs_result rs_outfilebuf_drain(rs_job_t *job, rs_buffers_t *buf, void *opaque)
     present = buf->next_out - fb->buf;
     if (present > 0) {
         int result;
-                
+
         assert(present > 0);
 
         result = fwrite(fb->buf, 1, present, f);
         if (present != result) {
-            rs_error("error draining buf to file: %s",
-                     strerror(errno));
+            rs_error("error draining buf to file: %s", strerror(errno));
             return RS_IO_ERROR;
         }
 
         buf->next_out = fb->buf;
         buf->avail_out = fb->buf_len;
     }
-        
+
     return RS_DONE;
 }
 
-
-rs_result rs_file_copy_cb(void *arg, rs_long_t pos, size_t *len, void **buf)
-{
-    int        got;
-    FILE       *f = (FILE *) arg;
+rs_result rs_file_copy_cb(void *arg, rs_long_t pos, size_t *len, void **buf) {
+    int got;
+    FILE *f = (FILE *)arg;
 
     if (fseek(f, pos, SEEK_SET)) {
         rs_log(RS_LOG_ERR, "seek failed: %s", strerror(errno));

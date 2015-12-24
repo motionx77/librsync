@@ -31,6 +31,8 @@ Testing
 .*.sw?
 isprefix_test
 
+build*
+
 *.bak
 
 *.tmp

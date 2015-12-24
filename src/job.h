@@ -27,15 +27,15 @@
  * The contents of this structure are private.
  */
 struct rs_job {
-    int                 dogtag;
+    int dogtag;
 
     /** Human-readable job operation name. */
-    const char          *job_name;
-    
+    const char *job_name;
+
     rs_buffers_t *stream;
 
     /** Callback for each processing step. */
-    rs_result           (*statefn)(rs_job_t *);
+    rs_result (*statefn)(rs_job_t *);
 
     /** Final result of processing job.  Used by rs_job_s_failed(). */
     rs_result final_result;
@@ -43,63 +43,62 @@ struct rs_job {
     /* XXX: These next two are redundant with their equivalents in the
      * signature field.  Perhaps we should get rid of them, but
      * they're also used in the mksum operation. */
-    int                 block_len;
-    int                 strong_sum_len;
+    int block_len;
+    int strong_sum_len;
 
     /** Signature that's either being read in, or used for
      * generating a delta. */
-    rs_signature_t      *signature;
-    
+    rs_signature_t *signature;
+
     /** Command byte currently being processed, if any. */
-    unsigned char       op;
+    unsigned char op;
 
     /** The weak signature digest used by readsums.c */
-    rs_weak_sum_t       weak_sig;
-    
+    rs_weak_sum_t weak_sig;
+
     /** The rollsum weak signature accumulator used by delta.c */
-    Rollsum             weak_sum;
+    Rollsum weak_sum;
 
     /** Lengths of expected parameters. */
-    rs_long_t           param1, param2;
-    
+    rs_long_t param1, param2;
+
     struct rs_prototab_ent const *cmd;
-    rs_mdfour_t      output_md4;
+    rs_mdfour_t output_md4;
 
     /** Encoding statistics. */
-    rs_stats_t          stats;
+    rs_stats_t stats;
 
     /**
      * Buffer of data in the scoop.  Allocation is
      *  scoop_buf[0..scoop_alloc], and scoop_next[0..scoop_avail] contains
      *  data yet to be processed. scoop_next[scoop_pos..scoop_avail] is the
      *  data yet to be scanned.  */
-    rs_byte_t   *scoop_buf;          /* the allocation pointer */
-    rs_byte_t   *scoop_next;         /* the data pointer */
-    size_t      scoop_alloc;           /* the allocation size */
-    size_t      scoop_avail;           /* the data size */
-    size_t      scoop_pos;             /* the scan position */
-        
+    rs_byte_t *scoop_buf;  /* the allocation pointer */
+    rs_byte_t *scoop_next; /* the data pointer */
+    size_t scoop_alloc;    /* the allocation size */
+    size_t scoop_avail;    /* the data size */
+    size_t scoop_pos;      /* the scan position */
+
     /** If USED is >0, then buf contains that much write data to
      * be sent out. */
-    rs_byte_t   write_buf[36];
-    int         write_len;
+    rs_byte_t write_buf[36];
+    int write_len;
 
     /** If \p copy_len is >0, then that much data should be copied
      * through from the input. */
-    rs_long_t   copy_len;
+    rs_long_t copy_len;
 
     /** Copy from the basis position. */
-    rs_long_t       basis_pos, basis_len;
+    rs_long_t basis_pos, basis_len;
 
     /** Callback used to copy data from the basis into the output. */
-    rs_copy_cb      *copy_cb;
-    void            *copy_arg;
+    rs_copy_cb *copy_cb;
+    void *copy_arg;
 
-    int             magic;
+    int magic;
 };
 
-
-rs_job_t * rs_job_new(const char *, rs_result (*statefn)(rs_job_t *));
+rs_job_t *rs_job_new(const char *, rs_result (*statefn)(rs_job_t *));
 
 void rs_job_check(rs_job_t *job);
 

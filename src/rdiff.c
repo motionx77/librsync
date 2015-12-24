@@ -19,12 +19,12 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-                              /*
-                               | .. after a year and a day, mourning is
-                               | dangerous to the survivor and troublesome
-                               | to the dead.
-                               |              -- Harold Bloom
-                               */
+/*
+ | .. after a year and a day, mourning is
+ | dangerous to the survivor and troublesome
+ | to the dead.
+ |              -- Harold Bloom
+ */
 
 /*
  * rdiff.c -- Command-line network-delta tool.
@@ -68,7 +68,6 @@
 #include "isprefix.h"
 #include "snprintf.h"
 
-
 #define PROGRAM "rdiff"
 
 static size_t block_len = RS_DEFAULT_BLOCK_LEN;
@@ -77,63 +76,50 @@ static size_t strong_len = 0;
 static int show_stats = 0;
 
 static int bzip2_level = 0;
-static int gzip_level  = 0;
+static int gzip_level = 0;
 
-
-enum {
-    OPT_GZIP = 1069, OPT_BZIP2
-};
+enum { OPT_GZIP = 1069, OPT_BZIP2 };
 
 extern int rs_roll_paranoia;
 char *rs_hash_name;
 
-const struct poptOption opts[] = {
-    { "verbose",     'v', POPT_ARG_NONE, 0,             'v' },
-    { "version",     'V', POPT_ARG_NONE, 0,             'V' },
-    { "input-size",  'I', POPT_ARG_INT,  &rs_inbuflen },
-    { "output-size", 'O', POPT_ARG_INT,  &rs_outbuflen },
-    { "hash",        'H', POPT_ARG_STRING, &rs_hash_name },
-    { "help",        '?', POPT_ARG_NONE, 0,             'h' },
-    {  0,            'h', POPT_ARG_NONE, 0,             'h' },
-    { "block-size",  'b', POPT_ARG_INT,  &block_len },
-    { "sum-size",    'S', POPT_ARG_INT,  &strong_len },
-    { "statistics",  's', POPT_ARG_NONE, &show_stats },
-    { "stats",        0,  POPT_ARG_NONE, &show_stats },
-    { "gzip",        'z', POPT_ARG_NONE, 0,             OPT_GZIP },
-    { "bzip2",       'i', POPT_ARG_NONE, 0,             OPT_BZIP2 },
-    { "paranoia",     0,  POPT_ARG_NONE, &rs_roll_paranoia },
-    { 0 }
-};
+const struct poptOption opts[] = {{"verbose", 'v', POPT_ARG_NONE, 0, 'v'},
+                                  {"version", 'V', POPT_ARG_NONE, 0, 'V'},
+                                  {"input-size", 'I', POPT_ARG_INT, &rs_inbuflen},
+                                  {"output-size", 'O', POPT_ARG_INT, &rs_outbuflen},
+                                  {"hash", 'H', POPT_ARG_STRING, &rs_hash_name},
+                                  {"help", '?', POPT_ARG_NONE, 0, 'h'},
+                                  {0, 'h', POPT_ARG_NONE, 0, 'h'},
+                                  {"block-size", 'b', POPT_ARG_INT, &block_len},
+                                  {"sum-size", 'S', POPT_ARG_INT, &strong_len},
+                                  {"statistics", 's', POPT_ARG_NONE, &show_stats},
+                                  {"stats", 0, POPT_ARG_NONE, &show_stats},
+                                  {"gzip", 'z', POPT_ARG_NONE, 0, OPT_GZIP},
+                                  {"bzip2", 'i', POPT_ARG_NONE, 0, OPT_BZIP2},
+                                  {"paranoia", 0, POPT_ARG_NONE, &rs_roll_paranoia},
+                                  {0}};
 
-
-static void rdiff_usage(const char *error)
-{
+static void rdiff_usage(const char *error) {
     fprintf(stderr, "%s\n"
-            "Try `%s --help' for more information.\n",
+                    "Try `%s --help' for more information.\n",
             error, PROGRAM);
 }
 
-
-static void rdiff_no_more_args(poptContext opcon)
-{
+static void rdiff_no_more_args(poptContext opcon) {
     if (poptGetArg(opcon)) {
         rdiff_usage("rdiff: too many arguments");
         exit(RS_SYNTAX_ERROR);
     }
 }
 
+static void bad_option(poptContext opcon, int error) {
+    char msgbuf[1000];
 
-static void bad_option(poptContext opcon, int error)
-{
-    char       msgbuf[1000];
-
-    snprintf(msgbuf, sizeof msgbuf-1, "%s: %s: %s",
-             PROGRAM, poptStrerror(error), poptBadOption(opcon, 0));
+    snprintf(msgbuf, sizeof msgbuf - 1, "%s: %s: %s", PROGRAM, poptStrerror(error), poptBadOption(opcon, 0));
     rdiff_usage(msgbuf);
 
     exit(RS_SYNTAX_ERROR);
 }
-
 
 static void help(void) {
     printf("Usage: rdiff [OPTIONS] signature [BASIS [SIGNATURE]]\n"
@@ -155,13 +141,10 @@ static void help(void) {
            "  -I, --input-size=BYTES    Input buffer size\n"
            "  -O, --output-size=BYTES   Output buffer size\n"
            "  -z, --gzip[=LEVEL]        gzip-compress deltas\n"
-           "  -i, --bzip2[=LEVEL]       bzip2-compress deltas\n"
-           );
+           "  -i, --bzip2[=LEVEL]       bzip2-compress deltas\n");
 }
 
-
-static void rdiff_show_version(void)
-{
+static void rdiff_show_version(void) {
     char const *bzlib = "", *zlib = "", *trace = "";
 
 #if 0
@@ -188,16 +171,12 @@ static void rdiff_show_version(void)
            "You may redistribute copies of librsync under the terms of the GNU\n"
            "Lesser General Public License.  For more information about these\n"
            "matters, see the files named COPYING.\n",
-           rs_librsync_version, RS_CANONICAL_HOST,
-           (long) (8 * sizeof(rs_long_t)), zlib, bzlib, trace);
+           rs_librsync_version, RS_CANONICAL_HOST, (long)(8 * sizeof(rs_long_t)), zlib, bzlib, trace);
 }
 
-
-
-static void rdiff_options(poptContext opcon)
-{
-    int             c;
-    char const      *a;
+static void rdiff_options(poptContext opcon) {
+    int c;
+    char const *a;
 
     while ((c = poptGetNextOpt(opcon)) != -1) {
         switch (c) {
@@ -224,9 +203,9 @@ static void rdiff_options(poptContext opcon)
                     bzip2_level = l;
             } else {
                 if (c == OPT_GZIP)
-                    gzip_level = -1;      /* library default */
+                    gzip_level = -1; /* library default */
                 else
-                    bzip2_level = 9;      /* demand the best */
+                    bzip2_level = 9; /* demand the best */
             }
             rs_error("sorry, compression is not really implemented yet");
             exit(RS_UNIMPLEMENTED);
@@ -237,16 +216,14 @@ static void rdiff_options(poptContext opcon)
     }
 }
 
-
 /**
  * Generate signature from remaining command line arguments.
  */
-static rs_result rdiff_sig(poptContext opcon)
-{
-    FILE            *basis_file, *sig_file;
-    rs_stats_t      stats;
-    rs_result       result;
-    rs_long_t       sig_magic;
+static rs_result rdiff_sig(poptContext opcon) {
+    FILE *basis_file, *sig_file;
+    rs_stats_t stats;
+    rs_result result;
+    rs_long_t sig_magic;
 
     basis_file = rs_file_open(poptGetArg(opcon), "rb");
     sig_file = rs_file_open(poptGetArg(opcon), "wb");
@@ -268,8 +245,7 @@ static rs_result rdiff_sig(poptContext opcon)
         return RS_PARAM_ERROR;
     }
 
-    result = rs_sig_file(basis_file, sig_file, block_len, strong_len,
-                         sig_magic, &stats);
+    result = rs_sig_file(basis_file, sig_file, block_len, strong_len, sig_magic, &stats);
 
     rs_file_close(sig_file);
     rs_file_close(basis_file);
@@ -282,14 +258,12 @@ static rs_result rdiff_sig(poptContext opcon)
     return result;
 }
 
-
-static rs_result rdiff_delta(poptContext opcon)
-{
-    FILE            *sig_file, *new_file, *delta_file;
-    char const      *sig_name;
-    rs_result       result;
-    rs_signature_t  *sumset;
-    rs_stats_t      stats;
+static rs_result rdiff_delta(poptContext opcon) {
+    FILE *sig_file, *new_file, *delta_file;
+    char const *sig_name;
+    rs_result result;
+    rs_signature_t *sumset;
+    rs_stats_t stats;
 
     if (!(sig_name = poptGetArg(opcon))) {
         rdiff_usage("Usage for delta: "
@@ -327,15 +301,12 @@ static rs_result rdiff_delta(poptContext opcon)
     return result;
 }
 
-
-
-static rs_result rdiff_patch(poptContext opcon)
-{
+static rs_result rdiff_patch(poptContext opcon) {
     /*  patch BASIS [DELTA [NEWFILE]] */
-    FILE               *basis_file, *delta_file, *new_file;
-    char const         *basis_name;
-    rs_stats_t          stats;
-    rs_result           result;
+    FILE *basis_file, *delta_file, *new_file;
+    char const *basis_name;
+    rs_stats_t stats;
+    rs_result result;
 
     if (!(basis_name = poptGetArg(opcon))) {
         rdiff_usage("Usage for patch: "
@@ -345,7 +316,7 @@ static rs_result rdiff_patch(poptContext opcon)
 
     basis_file = rs_file_open(basis_name, "rb");
     delta_file = rs_file_open(poptGetArg(opcon), "rb");
-    new_file =   rs_file_open(poptGetArg(opcon), "wb");
+    new_file = rs_file_open(poptGetArg(opcon), "wb");
 
     rdiff_no_more_args(opcon);
 
@@ -361,11 +332,8 @@ static rs_result rdiff_patch(poptContext opcon)
     return result;
 }
 
-
-
-static rs_result rdiff_action(poptContext opcon)
-{
-    const char      *action;
+static rs_result rdiff_action(poptContext opcon) {
+    const char *action;
 
     action = poptGetArg(opcon);
     if (!action)
@@ -381,18 +349,16 @@ static rs_result rdiff_action(poptContext opcon)
     return RS_SYNTAX_ERROR;
 }
 
-
-int main(const int argc, const char *argv[])
-{
-    poptContext     opcon;
-    rs_result       result;
+int main(const int argc, const char *argv[]) {
+    poptContext opcon;
+    rs_result result;
 
     opcon = poptGetContext(PROGRAM, argc, argv, opts, 0);
     rdiff_options(opcon);
     result = rdiff_action(opcon);
 
     if (result != RS_DONE)
-        rs_log(RS_LOG_ERR|RS_LOG_NONAME, "%s", rs_strerror(result));
+        rs_log(RS_LOG_ERR | RS_LOG_NONAME, "%s", rs_strerror(result));
 
     poptFreeContext(opcon);
     return result;

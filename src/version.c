@@ -22,5 +22,4 @@
 #include "config.h"
 #include "librsync.h"
 
-
 char const rs_librsync_version[] = (PACKAGE " " VERSION);

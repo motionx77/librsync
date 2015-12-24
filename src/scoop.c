@@ -1,19 +1,19 @@
 /*=                    -*- c-basic-offset: 4; indent-tabs-mode: nil; -*-
  *
  * librsync -- the library for network deltas
- * 
+ *
  * Copyright (C) 2000, 2001 by Martin Pool <mbp@sourcefrog.net>
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
  * as published by the Free Software Foundation; either version 2.1 of
  * the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
@@ -51,12 +51,11 @@
  * any memory allocation after startup, as bzlib does this.
  */
 
-
-                              /*
-                               | To walk on water you've gotta sink 
-                               | in the ice.
-                               |   -- Shihad, `The General Electric'.
-                               */ 
+/*
+ | To walk on water you've gotta sink
+ | in the ice.
+ |   -- Shihad, `The General Electric'.
+ */
 
 #include "config.h"
 
@@ -71,12 +70,10 @@
 #include "trace.h"
 #include "util.h"
 
-
 /**
  * Try to accept a from the input buffer to get LEN bytes in the scoop.
  */
-void rs_scoop_input(rs_job_t *job, size_t len)
-{
+void rs_scoop_input(rs_job_t *job, size_t len) {
     rs_buffers_t *stream = job->stream;
     size_t tocopy;
 
@@ -116,7 +113,6 @@ void rs_scoop_input(rs_job_t *job, size_t len)
     stream->avail_in -= tocopy;
 }
 
-
 /**
  * Advance the input cursor forward \p len bytes.  This is used after
  * doing readahead, when you decide you want to keep it.  \p len must
@@ -126,8 +122,7 @@ void rs_scoop_input(rs_job_t *job, size_t len)
  * after examining that block, we might decide to advance over all of
  * it (if there is a match), or just one byte (if not).
  */
-void rs_scoop_advance(rs_job_t *job, size_t len)
-{
+void rs_scoop_advance(rs_job_t *job, size_t len) {
     rs_buffers_t *stream = job->stream;
 
     /* It never makes sense to advance over a mixture of bytes from
@@ -135,19 +130,17 @@ void rs_scoop_advance(rs_job_t *job, size_t len)
      * at them all at the same time. */
     if (job->scoop_avail) {
         /* reading from the scoop buffer */
-         rs_trace("advance over %ld bytes from scoop", (long) len); 
+        rs_trace("advance over %ld bytes from scoop", (long)len);
         assert(len <= job->scoop_avail);
         job->scoop_avail -= len;
         job->scoop_next += len;
     } else {
-         rs_trace("advance over %ld bytes from input buffer", (long) len); 
+        rs_trace("advance over %ld bytes from input buffer", (long)len);
         assert(len <= stream->avail_in);
         stream->avail_in -= len;
         stream->next_in += len;
     }
 }
-
-
 
 /**
  * \brief Read from scoop without advancing.
@@ -162,11 +155,10 @@ void rs_scoop_advance(rs_job_t *job, size_t len)
  * lets you do readahead.  If you want to keep any of the data, you
  * should also call rs_scoop_advance() to skip over it.
  */
-rs_result rs_scoop_readahead(rs_job_t *job, size_t len, void **ptr)
-{
+rs_result rs_scoop_readahead(rs_job_t *job, size_t len, void **ptr) {
     rs_buffers_t *stream = job->stream;
     rs_job_check(job);
-    
+
     if (job->scoop_avail >= len) {
         /* We have enough data queued to satisfy the request,
          * so go straight from the scoop buffer. */
@@ -180,12 +172,10 @@ rs_result rs_scoop_readahead(rs_job_t *job, size_t len, void **ptr)
         rs_scoop_input(job, len);
 
         if (job->scoop_avail < len) {
-            rs_trace("still have only " PRINTF_FORMAT_U64 " bytes in scoop",
-                     PRINTF_CAST_U64(job->scoop_avail));
+            rs_trace("still have only " PRINTF_FORMAT_U64 " bytes in scoop", PRINTF_CAST_U64(job->scoop_avail));
             return RS_BLOCKED;
         } else {
-            rs_trace("scoop now has " PRINTF_FORMAT_U64 " bytes, this is enough",
-                     PRINTF_CAST_U64(job->scoop_avail));
+            rs_trace("scoop now has " PRINTF_FORMAT_U64 " bytes, this is enough", PRINTF_CAST_U64(job->scoop_avail));
             *ptr = job->scoop_next;
             return RS_DONE;
         }
@@ -214,8 +204,6 @@ rs_result rs_scoop_readahead(rs_job_t *job, size_t len, void **ptr)
     }
 }
 
-
-
 /**
  * Read LEN bytes if possible, and remove them from the input scoop.
  * If there's not enough data yet, return RS_BLOCKED.
@@ -226,8 +214,7 @@ rs_result rs_scoop_readahead(rs_job_t *job, size_t len, void **ptr)
  * \return RS_DONE if all the data was available, RS_BLOCKED if it's
  * not there.
  */
-rs_result rs_scoop_read(rs_job_t *job, size_t len, void **ptr)
-{
+rs_result rs_scoop_read(rs_job_t *job, size_t len, void **ptr) {
     rs_result result;
 
     result = rs_scoop_readahead(job, len, ptr);
@@ -237,28 +224,20 @@ rs_result rs_scoop_read(rs_job_t *job, size_t len, void **ptr)
     return result;
 }
 
-
-
 /*
  * Read whatever remains in the input stream, assuming that it runs up
  * to the end of the file.  Set LEN appropriately.
  */
-rs_result rs_scoop_read_rest(rs_job_t *job, size_t *len, void **ptr)
-{
+rs_result rs_scoop_read_rest(rs_job_t *job, size_t *len, void **ptr) {
     rs_buffers_t *stream = job->stream;
-    
+
     *len = job->scoop_avail + stream->avail_in;
 
     return rs_scoop_read(job, *len, ptr);
 }
 
-
-
 /**
  * Return the total number of bytes available including the scoop and input
  * buffer.
  */
-size_t rs_scoop_total_avail(rs_job_t *job)
-{
-    return job->scoop_avail + job->stream->avail_in;
-}
+size_t rs_scoop_total_avail(rs_job_t *job) { return job->scoop_avail + job->stream->avail_in; }

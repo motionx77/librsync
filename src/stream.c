@@ -1,32 +1,31 @@
 /*= -*- c-basic-offset: 4; indent-tabs-mode: nil; -*-
  *
  * librsync -- dynamic caching and delta update in HTTP
- * 
+ *
  * Copyright (C) 2000, 2001 by Martin Pool <mbp@sourcefrog.net>
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
  * as published by the Free Software Foundation; either version 2.1 of
  * the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-                     /*
-                      * Programming languages should be designed not
-                      * by piling feature on top of feature, but by
-                      * removing the weaknesses and restrictions that
-                      * make additional features appear necessary.
-                      *    -- Revised^5 Report on Scheme
-                      */
-
+/*
+ * Programming languages should be designed not
+ * by piling feature on top of feature, but by
+ * removing the weaknesses and restrictions that
+ * make additional features appear necessary.
+ *    -- Revised^5 Report on Scheme
+ */
 
 /*
  * OK, so I'll admit IO here is a little complex.  The most important
@@ -82,7 +81,6 @@
 
 /* TODO: Return errors rather than aborting if something goes wrong.  */
 
-
 #include "config.h"
 
 #include <assert.h>
@@ -95,7 +93,6 @@
 #include "util.h"
 #include "trace.h"
 
-
 /**
  * \brief Copy up to \p max_len bytes from input of \b stream to its output.
  *
@@ -106,31 +103,27 @@
  * rs_tube_copy() to cause the copy to happen gradually as space
  * becomes available.
  */
-int rs_buffers_copy(rs_buffers_t *stream, int max_len)
-{
+int rs_buffers_copy(rs_buffers_t *stream, int max_len) {
     int len = max_len;
-    
+
     assert(len > 0);
 
-    if ((unsigned) len > stream->avail_in) {
-        rs_trace("copy limited to %ld available input bytes",
-                 (long) stream->avail_in);
+    if ((unsigned)len > stream->avail_in) {
+        rs_trace("copy limited to %ld available input bytes", (long)stream->avail_in);
         len = stream->avail_in;
     }
 
-
-    if ((unsigned) len > stream->avail_out) {
-        rs_trace("copy limited to %ld available output bytes",
-                 (long) stream->avail_out);
+    if ((unsigned)len > stream->avail_out) {
+        rs_trace("copy limited to %ld available output bytes", (long)stream->avail_out);
         len = stream->avail_out;
     }
 
     if (!len)
         return 0;
-/*     rs_trace("stream copied chunk of %d bytes", len); */
+    /*     rs_trace("stream copied chunk of %d bytes", len); */
 
     memcpy(stream->next_out, stream->next_in, len);
-    
+
     stream->next_out += len;
     stream->avail_out -= len;
 
@@ -140,13 +133,9 @@ int rs_buffers_copy(rs_buffers_t *stream, int max_len)
     return len;
 }
 
-
 /**
  * Whenever a stream processing function exits, it should have done so
  * because it has either consumed all the input or has filled the
  * output buffer.  This function checks that simple postcondition.
  */
-void rs_buffers_check_exit(rs_buffers_t const *stream)
-{
-    assert(stream->avail_in == 0  ||  stream->avail_out == 0);
-}
+void rs_buffers_check_exit(rs_buffers_t const *stream) { assert(stream->avail_in == 0 || stream->avail_out == 0); }
