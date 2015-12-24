@@ -19,6 +19,14 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+#include <stdio.h>
+
+struct rs_filebuf {
+    FILE *f;
+    char *buf;
+    size_t buf_len;
+};
+
 typedef struct rs_filebuf rs_filebuf_t;
 
 rs_filebuf_t *rs_filebuf_new(FILE *f, size_t buf_len);

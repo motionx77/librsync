@@ -28,16 +28,15 @@
 /*
  * Test driver for isprefix.
  */
-int main(int argc, char **argv)
-{
-    assert(isprefix("foo", "foobar"));
-    assert(isprefix("", "foobar"));
-    assert(isprefix("foobar", "foobar"));
-    assert(isprefix("", ""));
-    assert(isprefix("f", "foorbar"));
+int main(int argc, char **argv) {
+  assert(isprefix("foo", "foobar"));
+  assert(isprefix("", "foobar"));
+  assert(isprefix("foobar", "foobar"));
+  assert(isprefix("", ""));
+  assert(isprefix("f", "foorbar"));
 
-    assert(!isprefix("foobar", "foo"));
-    assert(!isprefix("goo", "foo"));
-    assert(!isprefix("foo", ""));
-    assert(!isprefix("f", "g"));
+  assert(!isprefix("foobar", "foo"));
+  assert(!isprefix("goo", "foo"));
+  assert(!isprefix("foo", ""));
+  assert(!isprefix("f", "g"));
 }
