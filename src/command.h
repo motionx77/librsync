@@ -41,7 +41,8 @@ enum rs_op_kind {
 
     /* This one should never occur in file streams.  It's an
      * internal marker for invalid commands. */
-    RS_KIND_INVALID
+    RS_KIND_INVALID,
+    RS_KIND_NULL = 3000
 };
 
 typedef struct rs_op_kind_name {

@@ -54,7 +54,7 @@ static rs_result rs_loadsig_add_sum(rs_job_t *job, rs_strong_sum_t *strong) {
     sig->count++;
     new_size = sig->count * sizeof(rs_block_sig_t);
 
-    sig->block_sigs = realloc(sig->block_sigs, new_size);
+    sig->block_sigs = static_cast<rs_block_sig_t*>(realloc(sig->block_sigs, new_size));
 
     if (sig->block_sigs == NULL) {
         return RS_MEM_ERROR;

@@ -110,12 +110,12 @@ static void heap_sort(rs_signature_t *sums) {
 rs_result rs_build_hash_table(rs_signature_t *sums) {
     int i;
 
-    sums->tag_table = calloc(TABLE_SIZE, sizeof(sums->tag_table[0]));
+    sums->tag_table = static_cast<rs_tag_table_entry_t*>(calloc(TABLE_SIZE, sizeof(sums->tag_table[0])));
     if (!sums->tag_table)
         return RS_MEM_ERROR;
 
     if (sums->count > 0) {
-        sums->targets = calloc(sums->count, sizeof(rs_target_t));
+        sums->targets = static_cast<rs_target_t*>(calloc(sums->count, sizeof(rs_target_t)));
         if (!sums->targets) {
             free(sums->tag_table);
             sums->tag_table = NULL;

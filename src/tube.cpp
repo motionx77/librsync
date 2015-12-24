@@ -168,7 +168,7 @@ static void rs_tube_catchup_copy(rs_job_t *job) {
  * Return RS_DONE if the tube is now empty and ready to accept another
  * command, RS_BLOCKED if there is still stuff waiting to go out.
  */
-int rs_tube_catchup(rs_job_t *job) {
+rs_result rs_tube_catchup(rs_job_t *job) {
     if (job->write_len)
         rs_tube_catchup_write(job);
 

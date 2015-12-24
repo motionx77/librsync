@@ -36,9 +36,10 @@ size_t rs_unbase64(char *s) {
     char const *b64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
     int bit_offset, byte_offset, idx, i, n;
     unsigned char *d = (unsigned char *)s;
-    char *p;
+    const char *p;
 
     n = i = 0;
+
 
     while (*s && (p = strchr(b64, *s))) {
         idx = (int)(p - b64);

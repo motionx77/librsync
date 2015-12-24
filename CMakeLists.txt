@@ -164,10 +164,6 @@ execute_process(COMMAND ${PERL_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/src/mkpr
 
 # Testing
 
-add_executable(isprefix_test tests/isprefix_test.c src/isprefix.c)
-
-add_test(NAME isprefix_test COMMAND isprefix_test)
-
 add_test(NAME Help COMMAND help.test ${CMAKE_CURRENT_BINARY_DIR} WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/tests)
 add_test(NAME Mutate COMMAND mutate.test ${CMAKE_CURRENT_BINARY_DIR} WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/tests)
 add_test(NAME Signature COMMAND signature.test ${CMAKE_CURRENT_BINARY_DIR} WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/tests)
@@ -201,34 +197,34 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src)
 
 set(rsync_LIB_SRCS
     # This was generated
-    ${CMAKE_CURRENT_BINARY_DIR}/src/prototab.c
-    src/base64.c
-    src/buf.c
-    src/checksum.c
-    src/command.c
-    src/delta.c
-    src/emit.c
-    src/fileutil.c
-    src/hex.c
-    src/job.c
-    src/mdfour.c
-    src/mksum.c
-    src/msg.c
-    src/netint.c
-    src/patch.c
-    src/readsums.c
-    src/rollsum.c
-    src/scoop.c
-    src/search.c
-    src/stats.c
-    src/stream.c
-    src/sumset.c
-    src/trace.c
-    src/tube.c
-    src/util.c
-    src/version.c
-    src/whole.c
-    src/blake2b-ref.c)
+    ${CMAKE_CURRENT_BINARY_DIR}/src/prototab.cpp
+    src/base64.cpp
+    src/buf.cpp
+    src/checksum.cpp
+    src/command.cpp
+    src/delta.cpp
+    src/emit.cpp
+    src/fileutil.cpp
+    src/hex.cpp
+    src/job.cpp
+    src/mdfour.cpp
+    src/mksum.cpp
+    src/msg.cpp
+    src/netint.cpp
+    src/patch.cpp
+    src/readsums.cpp
+    src/rollsum.cpp
+    src/scoop.cpp
+    src/search.cpp
+    src/stats.cpp
+    src/stream.cpp
+    src/sumset.cpp
+    src/trace.cpp
+    src/tube.cpp
+    src/util.cpp
+    src/version.cpp
+    src/whole.cpp
+    src/blake2b-ref.cpp)
 
 add_library(rsync SHARED ${rsync_LIB_SRCS})
 
@@ -245,8 +241,7 @@ install(TARGETS rsync ${INSTALL_TARGETS_DEFAULT_ARGS} DESTINATION lib)
 ########### next target ###############
 
 set(rdiff_SRCS
-    src/rdiff.c
-    src/isprefix.c)
+    src/rdiff.cpp)
 
 add_executable(rdiff ${rdiff_SRCS})
 

@@ -63,7 +63,7 @@ int rs_inbuflen = 16000, rs_outbuflen = 16000;
 rs_filebuf_t *rs_filebuf_new(FILE *f, size_t buf_len) {
     rs_filebuf_t *pf = rs_alloc_struct(rs_filebuf_t);
 
-    pf->buf = rs_alloc(buf_len, "file buffer");
+    pf->buf = static_cast<char*>(rs_alloc(buf_len, "file buffer"));
     pf->buf_len = buf_len;
     pf->f = f;
 

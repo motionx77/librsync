@@ -35,7 +35,7 @@ struct rs_op_kind_name const rs_op_kind_names[] = {{"END", RS_KIND_END},
                                                    {"SIGNATURE", RS_KIND_SIGNATURE},
                                                    {"CHECKSUM", RS_KIND_CHECKSUM},
                                                    {"INVALID", RS_KIND_INVALID},
-                                                   {NULL, 0}};
+                                                   {NULL, RS_KIND_NULL}};
 
 /*
  * Return a human-readable name for KIND.
@@ -43,7 +43,7 @@ struct rs_op_kind_name const rs_op_kind_names[] = {{"END", RS_KIND_END},
 char const *rs_op_kind_name(enum rs_op_kind kind) {
     const struct rs_op_kind_name *k;
 
-    for (k = rs_op_kind_names; k->kind; k++) {
+    for (k = rs_op_kind_names; k->kind != RS_KIND_NULL; k++) {
         if (k->kind == kind) {
             return k->name;
         }

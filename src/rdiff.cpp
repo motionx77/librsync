@@ -65,7 +65,6 @@
 #include "fileutil.h"
 #include "util.h"
 #include "trace.h"
-#include "isprefix.h"
 #include "snprintf.h"
 
 #define PROGRAM "rdiff"
@@ -98,6 +97,16 @@ const struct poptOption opts[] = {{"verbose", 'v', POPT_ARG_NONE, 0, 'v'},
                                   {"bzip2", 'i', POPT_ARG_NONE, 0, OPT_BZIP2},
                                   {"paranoia", 0, POPT_ARG_NONE, &rs_roll_paranoia},
                                   {0}};
+int isprefix(char const *tip, char const *iceberg) {
+    while (*tip) {
+        if (*tip != *iceberg)
+            return 0;
+        tip++;
+        iceberg++;
+    }
+
+    return 1;
+}
 
 static void rdiff_usage(const char *error) {
     fprintf(stderr, "%s\n"
@@ -223,7 +232,7 @@ static rs_result rdiff_sig(poptContext opcon) {
     FILE *basis_file, *sig_file;
     rs_stats_t stats;
     rs_result result;
-    rs_long_t sig_magic;
+    rs_magic_number sig_magic;
 
     basis_file = rs_file_open(poptGetArg(opcon), "rb");
     sig_file = rs_file_open(poptGetArg(opcon), "wb");

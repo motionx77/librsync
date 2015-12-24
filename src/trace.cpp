@@ -129,7 +129,7 @@ void rs_log0(int level, char const *fn, char const *fmt, ...) {
     va_end(va);
 }
 
-void rs_trace_stderr(rs_loglevel UNUSED(level), char const *msg) {
+void rs_trace_stderr(int UNUSED(level), char const *msg) {
     /* NOTE NO TRAILING NUL */
     write(STDERR_FILENO, msg, strlen(msg));
 }

@@ -5,37 +5,36 @@ CONFIG -= qt
 
 LIBS += -lpopt
 
-SOURCES += prototab.c \
-    base64.c \
-    blake2b-ref.c \
-    buf.c \
-    checksum.c \
-    command.c \
-    delta.c \
-    emit.c \
-    fileutil.c \
-    hex.c \
-    isprefix.c \
-    job.c \
-    mdfour.c \
-    mksum.c \
-    msg.c \
-    netint.c \
-    patch.c \
-    rdiff.c \
-    readsums.c \
-    rollsum.c \
-    scoop.c \
-    search.c \
-    snprintf.c \
-    stats.c \
-    stream.c \
-    sumset.c \
-    trace.c \
-    tube.c \
-    util.c \
-    version.c \
-    whole.c
+SOURCES += prototab.cpp \
+    base64.cpp \
+    blake2b-ref.cpp \
+    buf.cpp \
+    checksum.cpp \
+    command.cpp \
+    delta.cpp \
+    emit.cpp \
+    fileutil.cpp \
+    hex.cpp \
+    job.cpp \
+    mdfour.cpp \
+    mksum.cpp \
+    msg.cpp \
+    netint.cpp \
+    patch.cpp \
+    rdiff.cpp \
+    readsums.cpp \
+    rollsum.cpp \
+    scoop.cpp \
+    search.cpp \
+    snprintf.cpp \
+    stats.cpp \
+    stream.cpp \
+    sumset.cpp \
+    trace.cpp \
+    tube.cpp \
+    util.cpp \
+    version.cpp \
+    whole.cpp
 
 DISTFILES += \
     rdiff.magic
@@ -51,7 +50,6 @@ HEADERS += \
     command.h \
     emit.h \
     fileutil.h \
-    isprefix.h \
     job.h \
     librsync.h \
     mdfour.h \

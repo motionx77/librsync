@@ -83,7 +83,7 @@ void rs_scoop_input(rs_job_t *job, size_t len) {
         /* need to allocate a new buffer, too */
         rs_byte_t *newbuf;
         int newsize = 2 * len;
-        newbuf = rs_alloc(newsize, "scoop buffer");
+        newbuf = static_cast<rs_byte_t*>(rs_alloc(newsize, "scoop buffer"));
         if (job->scoop_avail)
             memcpy(newbuf, job->scoop_next, job->scoop_avail);
         if (job->scoop_buf)

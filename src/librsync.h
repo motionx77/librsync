@@ -128,7 +128,7 @@ typedef enum {
  * \param msg message to be logged.
  * \sa \ref api_trace
  */
-typedef void rs_trace_fn_t(rs_loglevel level, char const *msg);
+typedef void rs_trace_fn_t(int level, char const *msg);
 
 /**
  * Set the least important message severity that will be output.
@@ -145,7 +145,7 @@ void rs_trace_to(rs_trace_fn_t *);
  * ::rs_trace_fn_t, and may be passed to rs_trace_to().
  * \sa \ref api_trace
  */
-void rs_trace_stderr(rs_loglevel level, char const *msg);
+void rs_trace_stderr(int level, char const *msg);
 
 /** Check whether the library was compiled with debugging trace
  *
